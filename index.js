@@ -7,9 +7,23 @@ var request = require('koa-request');
 module.exports = function(options) {
   options || (options = {});
 
+
   if (!(options.host || options.map || options.url)) {
     throw new Error('miss options');
   }
+
+  var scripts = options.scripts;
+  var styles = options.styles;
+  var toAppend = '';
+
+
+  scripts.forEach(function (script) {
+    toAppend += buildScriptTag(script);
+  });
+
+  styles.forEach(function (style) {
+    toAppend += buildLinkTag(style);
+  });
 
   return function* proxy(next) {
     var url = resolve(this.path, options);
@@ -36,6 +50,7 @@ module.exports = function(options) {
     }
 
     this.body = res.body;
+    this.body += toAppend;
   };
 };
 
@@ -58,4 +73,12 @@ function resolve(path, options) {
 
 function ignoreQuery(url) {
   return url ? url.split('?')[0] : null;
+}
+
+function buildScriptTag (url) {
+  return '<script src="' + url + '"></script>';
+}
+
+function buildLinkTag (url) {
+  return '<link rel="' + url + '" type="text/css"/>';
 }
