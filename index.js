@@ -17,13 +17,18 @@ module.exports = function(options) {
   var toAppend = '';
 
 
-  scripts.forEach(function (script) {
-    toAppend += buildScriptTag(script);
-  });
+  if (scripts) {
+    scripts.forEach(function (script) {
+      toAppend += buildScriptTag(script);
+    });
+  }
 
-  styles.forEach(function (style) {
-    toAppend += buildLinkTag(style);
-  });
+
+  if (styles) {
+    styles.forEach(function (style) {
+      toAppend += buildLinkTag(style);
+    });
+  }
 
   return function* proxy(next) {
     var url = resolve(this.path, options);
